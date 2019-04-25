@@ -1,0 +1,35 @@
+---
+title: "ds202_hw6"
+author: "Connor Hergenreter"
+date: "April 24, 2019"
+output: html_document
+---
+
+```{r}
+library(ggplot2)
+library(readxl)
+library(ggrepel)
+```
+
+# Question 1
+
+Here I take the breed, category, size, score, popularity, and intelligence columns from the KIB file. I add titles for each column and remove rows where information is missing.
+
+```{r}
+best <- read_xlsx("KIB - Best in Show (public).xlsx", sheet = "Best in show", skip = 7)
+bestFull <- read_xlsx("KIB - Best in Show (public).xlsx", sheet = "Best in show full sheet", skip = 3)
+
+bestFull <- bestFull[c(1,3,5,7,11,32)]
+
+names(bestFull) <- c("Breed","Category","Score","Popularity","Intelligence","Size")
+
+bestFull <- na.omit(bestFull)
+```
+
+# Question 2
+
+This plot shows breeds by their score and popularity. The size of the point is dependent on their intelligence (small points are intelligent and large points are not). There is a color assigned to the category of breed and size is represented by the shape of the points.
+
+```{r}
+ggplot(bestFull, aes(x=Score, y=Popularity, size=Intelligence, color=Category, shape=Size)) + geom_point() + guides(size=FALSE) + scale_color_manual(breaks = c("Herding","Hound","Non-sporting","Sporting","Terrier","Toy","Working"), values=c("Orange","Blue","Green","Red","Yellow","Purple","Grey"), aesthetics="Color") + scale_y_reverse() + geom_text_repel(aes(label=Breed), color="black", size = 2.5) + labs(title="Dog Breeds by Score and Popularity with Point Size for Intelligence", x="Breed Score", y="Breed Popularity") + theme_light()
+```
